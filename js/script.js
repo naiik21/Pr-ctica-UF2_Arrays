@@ -69,7 +69,6 @@ setTimeout(() => {
 	tabla(pokeName, municipiNom, meteoritName, peliTitle);
 }
 	, 1000);
-
 */
 
 
@@ -83,8 +82,19 @@ let nObj = 0;
 
 function env() {
 	event.preventDefault(); // Evita la recarga de la página si es un formulario
-	bbdd = document.querySelector('input[name=bbdd]:checked').value;
-	selectBBDD(bbdd);
+	try {
+		bbdd = document.querySelector('input[name=bbdd]:checked').value;
+		lista = [];
+		tiposColumnas;
+		mitjana = 0;
+		nObj = 0;
+		selectBBDD(bbdd);
+	} catch (error) {
+		alert("Selecciona una llista i envia");
+		location.reload();
+	}
+
+
 }
 
 
@@ -110,15 +120,16 @@ function selectBBDD(bbdd) {
 	} else if (bbdd == "meteorits") {
 		meteorits.forEach((meteorit) => {
 			lista.push([meteorit.id, meteorit.year, meteorit.name, meteorit.mass]);
-			nObj++;
-			mitjana += parseFloat(meteorit.mass);
+			if (meteorit.mass === undefined) {
+				nObj++;
+				mitjana += 0;
+			} else {
+				nObj++;
+				mitjana += parseFloat(meteorit.mass);
+			}
 		});
-		console.log(nObj);
-		console.log(mitjana);
 		mitjana = mitjana / nObj
-		console.log(mitjana);
 		mitjana = mitjana.toFixed(2);
-		console.log(mitjana);
 		tiposColumnas = ['int', 'year', 'string', 'float'];
 	} else if (bbdd == "pelicules") {
 		pelicules.forEach((pelicula) => {
@@ -156,7 +167,11 @@ function orderList(order) {
 }
 
 function searchList() {
-	let pos = prompt("Diguem un numero:");
+	let nom = prompt("Diguem el nom del/a " + bbdd + ":");
+	//let resultado = lista.filter(valor => valor[2] != nom);
+	let resultado = lista.filter(valor => valor[2].toLowerCase().includes(nom.toLowerCase()));
+
+	imprTable(resultado, tiposColumnas)
 }
 
 function calcMitjana() {
@@ -164,6 +179,11 @@ function calcMitjana() {
 }
 
 function imprTable(bbdd, tiposColumnas) {
+	document.getElementById("resultat").innerHTML = "";
+	if (bbdd == null || tiposColumnas == null) {
+		alert("Selecciona una llista i envia");
+		location.reload();
+	}
 	let table = document.createElement("table");
 	let cabezera = table.insertRow(0);
 
