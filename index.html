@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="js/script.js"></script>
+	<title>Document</title>
+</head>
+
+<body>
+	<form>
+		<fieldset>
+			<legend>Selecciona amb quina llista vols treballar:</legend>
+			<div>
+				<input type="radio" id="pokemons" name="bbdd" value="pokemons" />
+				Pokemon
+				<br>
+				<input type="radio" id="municipis" name="bbdd" value="municipis" />
+				Municipis
+				<br>
+				<input type="radio" id="meteorits" name="bbdd" value="meteorits" />
+				Meteorits
+				<br>
+				<input type="radio" id="pelicules" name="bbdd" value="pelicules" />
+				Pelicules
+				<br>
+				<button onclick="env()">Envia</button>
+			</div>
+		</fieldset>
+	</form>
+
+
+
+	<button onclick="imprTaulaNormal()">Imprimir taula</button>
+	<button onclick="location.reload()">Reload</button>
+	<button onclick="orderList('asc')">Ordena Ascendent</button>
+	<button onclick="orderList('desc')">Ordena Descendent</button>
+	<button onclick="searchList()">Bucar</button>
+	<button onclick="calcMitjana()">Mitjana</button>
+
+
+	<div id="resultat"></div>
+</body>
+
+</html>
