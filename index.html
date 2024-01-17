@@ -6,6 +6,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="js/script.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<title>Document</title>
 </head>
 
@@ -35,13 +36,19 @@
 
 	<button onclick="imprTaulaNormal()">Imprimir taula</button>
 	<button onclick="location.reload()">Reload</button>
-	<button onclick="orderList('asc')">Ordena Ascendent</button>
-	<button onclick="orderList('desc')">Ordena Descendent</button>
+	<button onclick="orderList('asc', 2, 'click')">Ordena Ascendent</button>
+	<button onclick="orderList('desc', 2, 'click')">Ordena Descendent</button>
 	<button onclick="searchList()">Bucar</button>
+	<input type="text" value="" id="txtSearch" />
 	<button onclick="calcMitjana()">Mitjana</button>
+	<button onclick="grafic()">Grafica</button>
+	<button onclick="listaObj()">Objeto</button>
 
 
 	<div id="resultat"></div>
+	<div class="chart-container" style="position: relative; width:700px">
+		<canvas id="myChart"></canvas>
+	</div>
 </body>
 
 </html>

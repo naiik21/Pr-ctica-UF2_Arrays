@@ -89,14 +89,13 @@ function env() {
 		mitjana = 0;
 		nObj = 0;
 		selectBBDD(bbdd);
+
 	} catch (error) {
 		alert("Selecciona una llista i envia");
 		location.reload();
 	}
 
-
 }
-
 
 function selectBBDD(bbdd) {
 	if (bbdd == "pokemons") {
@@ -144,18 +143,69 @@ function selectBBDD(bbdd) {
 }
 
 function imprTaulaNormal() {
+	lista = [];
+	selectBBDD(bbdd)
 	imprTable(lista, tiposColumnas);
 }
 
-function orderList(order) {
+let orden = 'asc';
+function orderList(order, key, entrada) {
+
+	//if (llamada == 'num') {
 	// Funció de comparació per ordenar per el segon valor de cada subarray
 	const compararPorSegundoValor = (a, b) => {
-		const valorA = a[2];
-		const valorB = b[2];
+		let valorA = a[key];
+		let valorB = b[key];
+		let tipo = tiposColumnas[key];
 
-		// Utiliza localeCompare per comparar cadenas de text de menera alfabética
-		return valorA.localeCompare(valorB);
+		switch (tipo) {
+			case 'int':
+				console.log(tipo);
+				valorA = valorA;
+				valorB = valorB;
+				lista.sort(function (valorA, valorB) {
+					return valorA[key] > valorB[key];
+				});
+				break;
+			case 'img':
+				console.log(tipo);
+				break;
+			case 'string':
+				console.log(tipo);
+				return valorA.localeCompare(valorB);
+				break;
+			case 'float':
+				console.log(tipo);
+				valorA = a[key];
+				valorB = b[key];
+				lista.sort(function (valorA, valorB) {
+					//console.log(parseFloat(valorA[key]) + "====" + parseFloat(valorB[key]))
+					return parseFloat(valorA[key]) > parseFloat(valorB[key]);
+				});
+				break;
+			case 'year':
+				console.log(tipo);
+				valorA = a[key] + 0;
+				valorB = b[key] + 0;
+				lista.sort(function (valorA, valorB) {
+					return valorA[key] > valorB[key];
+				});
+				break;
+			/*default:
+				celda.textContent = obj[key];
+				break;
+			*/
+		}
 	};
+	//} else {
+	// Funció de comparació per ordenar per el segon valor de cada subarray
+	// const compararPorSegundoValor = (a, b) => {
+	// 	const valorA = a[2];
+	// 	const valorB = b[2];
+
+	// 	// Utiliza localeCompare per comparar cadenas de text de menera alfabética
+	// 	return valorA.localeCompare(valorB);
+	// };
 
 	if (order == 'asc') {
 		lista.sort(compararPorSegundoValor);
@@ -163,11 +213,12 @@ function orderList(order) {
 		lista.sort(compararPorSegundoValor);
 		lista.reverse();
 	}
+	//}
 	imprTable(lista, tiposColumnas);
 }
 
-function searchList() {
-	let nom = prompt("Diguem el nom del/a " + bbdd + ":");
+function searchList(nom) {
+	//let nom = prompt("Diguem el nom del/a " + bbdd + ":");
 	//let resultado = lista.filter(valor => valor[2] != nom);
 	let resultado = lista.filter(valor => valor[2].toLowerCase().includes(nom.toLowerCase()));
 
@@ -180,6 +231,10 @@ function calcMitjana() {
 
 function imprTable(bbdd, tiposColumnas) {
 	document.getElementById("resultat").innerHTML = "";
+	if (myChart) {
+		// Destruye el gráfico existente si hay uno
+		myChart.destroy();
+	}
 	if (bbdd == null || tiposColumnas == null) {
 		alert("Selecciona una llista i envia");
 		location.reload();
@@ -190,6 +245,15 @@ function imprTable(bbdd, tiposColumnas) {
 	// Creamos cabezera de las columnas
 	Object.keys(bbdd[0]).forEach(function (key, index) {
 		let th = document.createElement("th");
+		th.onclick = function () {
+			orderList(orden, key, 'num');
+			if (orden == 'asc') {
+				orden = 'desc';
+			} else {
+				orden = 'asc';
+			}
+			console.log(key);
+		};
 		th.textContent = key;
 		cabezera.appendChild(th);
 
@@ -234,3 +298,193 @@ function imprTable(bbdd, tiposColumnas) {
 	// Mostrar la tabla en el contenedor
 	document.getElementById("resultat").appendChild(table);
 }
+
+
+
+//* Part 2
+let myChart = null;
+
+function grafic() {
+	document.getElementById("resultat").innerHTML = "";
+	const data = {
+		labels: [],
+		datasets: [{
+			label: 'My First Dataset',
+			data: [],
+			backgroundColor: [],
+			borderColor: []
+		}]
+	}
+	const config = {
+		type: 'polarArea',
+		data: data,
+		options: {}
+	};
+
+	const grafMap = new Map();
+	let count = 0;
+
+	if (bbdd == "pokemons") {
+		//Pokemons
+		pokemons.forEach((pokemon) => {
+			pokemon.type.forEach((type) => {
+				if (!grafMap.has(type)) {
+					grafMap.set(type, 0);
+					count++;
+				}
+				grafMap.set(type, grafMap.get(type) + 1);
+			});
+		});
+		grafMap.forEach(function (value, key) {
+			data.labels.push(key);
+			data.datasets[0].data.push(value);
+		});
+	} else if (bbdd == "municipis") {
+		//Municipis
+		municipis.forEach((municipi) => {
+			if (!grafMap.has(municipi.grup_comarca.comarca_nom)) {
+				grafMap.set(municipi.grup_comarca.comarca_nom, 0);
+				count++;
+			}
+			grafMap.set(municipi.grup_comarca.comarca_nom, grafMap.get(municipi.grup_comarca.comarca_nom) + 1);
+		});
+		grafMap.forEach(function (value, key) {
+			data.labels.push(key);
+			data.datasets[0].data.push(value);
+		});
+	} else if (bbdd == "meteorits") {
+		//Meteorits
+		meteorits.forEach((meteorit) => {
+			if (!grafMap.has(meteorit.fall)) {
+				grafMap.set(meteorit.fall, 0);
+				count++;
+			}
+			grafMap.set(meteorit.fall, grafMap.get(meteorit.fall) + 1);
+
+		});
+		grafMap.forEach(function (value, key) {
+			data.labels.push(key);
+			data.datasets[0].data.push(value);
+		});
+	} else if (bbdd == "pelicules") {
+		//Pelicules
+		pelicules.forEach((pelicula) => {
+			pelicula.genres.forEach((genere) => {
+				if (!grafMap.has(genere)) {
+					grafMap.set(genere, 0);
+					count++;
+				}
+				grafMap.set(genere, grafMap.get(genere) + 1);
+			});
+		});
+		grafMap.forEach(function (value, key) {
+			data.labels.push(key);
+			data.datasets[0].data.push(value);
+		});
+	}
+
+	for (let n = 0; n < count; n++) {
+		var r = Math.floor(Math.random() * 256);
+		var g = Math.floor(Math.random() * 256);
+		var b = Math.floor(Math.random() * 256);
+		data.datasets[0].backgroundColor.push("rgba(" + r + "," + g + "," + b + ", 0.2)");
+		data.datasets[0].borderColor.push("rgba(" + r + "," + g + "," + b + ")");
+	}
+
+
+	if (myChart) {
+		// Destruye el gráfico existente si hay uno
+		myChart.destroy();
+	}
+
+	// Crea un nuevo gráfico
+	myChart = new Chart(
+		document.getElementById('myChart'),
+		config
+	);
+
+}
+
+
+//* Parte 3
+// let inputSearch = document.getElementById('txtSearch')
+// inputSearch.addEventListener('input', (e) => {
+// 	console.log(inputSearch.value)
+// });
+
+let nom = "";
+
+
+document.addEventListener('DOMContentLoaded', function () {
+	let inputSearch = document.getElementById('txtSearch');
+	inputSearch.addEventListener('input', (e) => {
+		searchList(inputSearch.value);
+	});
+});
+
+
+//* Part 4
+function listaObj() {
+	document.getElementById("resultat").innerHTML = "";
+	if (bbdd == 'pokemons') {
+		var pokemonsDeObjetos = [];
+
+		lista.forEach((pokemon) => {
+			var pokemonObjeto = {
+				id: pokemon[0],
+				img: pokemon[1],
+				name: pokemon[2],
+				weight: pokemon[3]
+			};
+			pokemonsDeObjetos.push(pokemonObjeto);
+		});
+
+		// Crear la tabla y el cuerpo de la tabla
+		var table = document.createElement("table");
+		table.border = "1";
+
+		var thead = document.createElement("thead");
+		var headerRow = thead.insertRow();
+		["ID", "Image", "Name", "Weight"].forEach(function (headerText) {
+			var th = document.createElement("th");
+			th.textContent = headerText;
+			headerRow.appendChild(th);
+		});
+		table.appendChild(thead);
+
+		var tbody = document.createElement("tbody");
+
+		pokemonsDeObjetos.forEach(function (pokemon) {
+			var row = tbody.insertRow();
+
+			var cell1 = row.insertCell(0);
+			var cell2 = row.insertCell(1);
+			var cell3 = row.insertCell(2);
+			var cell4 = row.insertCell(3);
+
+			cell1.textContent = pokemon.id;
+			cell2.innerHTML = `<img src="${pokemon.img}" alt="${pokemon.name}" width="50" height="50">`;
+			cell3.textContent = pokemon.name;
+			cell4.textContent = pokemon.weight;
+		});
+
+		table.appendChild(tbody);
+
+		// Agregar la tabla al cuerpo del documento
+		document.getElementById("resultat").appendChild(table);
+
+		console.log(pokemonsDeObjetos);
+	} else {
+		alert('Aquest boto nomes serveix per pokemons')
+	}
+
+}
+
+
+
+
+
+
+
+
+
