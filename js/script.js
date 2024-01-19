@@ -77,7 +77,7 @@ setTimeout(() => {
 var bbdd = null;
 let lista = [];
 let tiposColumnas;
-let mitjana = 0;
+let mitjanaNT = 0;
 let nObj = 0;
 
 function env() {
@@ -86,7 +86,7 @@ function env() {
 		bbdd = document.querySelector('input[name=bbdd]:checked').value;
 		lista = [];
 		tiposColumnas;
-		mitjana = 0;
+		mitjanaNT = 0;
 		nObj = 0;
 		selectBBDD(bbdd);
 
@@ -98,124 +98,140 @@ function env() {
 }
 
 function selectBBDD(bbdd) {
+	lista = [];
+	nObj = 0;
+	mitjanaNT = 0;
 	if (bbdd == "pokemons") {
 		pokemons.forEach((pokemon) => {
 			lista.push([pokemon.id, pokemon.img, pokemon.name, pokemon.weight]);
 			nObj++;
-			mitjana += parseFloat(pokemon.weight);
+			mitjanaNT += parseFloat(pokemon.weight);
 		});
-		mitjana = mitjana / nObj
-		mitjana = mitjana.toFixed(2);
 		tiposColumnas = ['int', 'img', 'string', 'float'];
 	} else if (bbdd == "municipis") {
 		municipis.forEach((municipi) => {
 			lista.push([municipi.grup_ajuntament.codi_postal, municipi.municipi_escut, municipi.municipi_nom, municipi.nombre_habitants]);
 			nObj++;
-			mitjana += parseFloat(municipi.nombre_habitants);
+			mitjanaNT += parseFloat(municipi.nombre_habitants);
 		});
-		mitjana = mitjana / nObj
-		mitjana = mitjana.toFixed(2);
 		tiposColumnas = ['string', 'img', 'string', 'int'];
 	} else if (bbdd == "meteorits") {
 		meteorits.forEach((meteorit) => {
 			lista.push([meteorit.id, meteorit.year, meteorit.name, meteorit.mass]);
 			if (meteorit.mass === undefined) {
 				nObj++;
-				mitjana += 0;
+				mitjanaNT += 0;
 			} else {
 				nObj++;
-				mitjana += parseFloat(meteorit.mass);
+				mitjanaNT += parseFloat(meteorit.mass);
 			}
 		});
-		mitjana = mitjana / nObj
-		mitjana = mitjana.toFixed(2);
 		tiposColumnas = ['int', 'year', 'string', 'float'];
 	} else if (bbdd == "pelicules") {
 		pelicules.forEach((pelicula) => {
 			lista.push([pelicula.rating, pelicula.url, pelicula.title, pelicula.year]);
 			nObj++;
-			mitjana += parseFloat(pelicula.rating);
+			mitjanaNT += parseFloat(pelicula.rating);
 		});
-		mitjana = mitjana / nObj
-		mitjana = mitjana.toFixed(2);
 		tiposColumnas = ['float', 'img', 'string', 'int'];
 	}
 }
 
 function imprTaulaNormal() {
-	lista = [];
 	selectBBDD(bbdd)
 	imprTable(lista, tiposColumnas);
 }
 
 let orden = 'asc';
-function orderList(order, key, entrada) {
+function orderList(order, key, llamada) {
+	selectBBDD(bbdd);
 
-	//if (llamada == 'num') {
-	// Funció de comparació per ordenar per el segon valor de cada subarray
-	const compararPorSegundoValor = (a, b) => {
-		let valorA = a[key];
-		let valorB = b[key];
-		let tipo = tiposColumnas[key];
+	if (llamada == 'num') {
+		//Funció de comparació per ordenar per el segon valor de cada subarray
+		const compararPorSegundoValor = (a, b) => {
+			let valorA = a[key];
+			let valorB = b[key];
+			let tipo = tiposColumnas[key];
 
-		switch (tipo) {
-			case 'int':
-				console.log(tipo);
-				valorA = valorA;
-				valorB = valorB;
-				lista.sort(function (valorA, valorB) {
-					return valorA[key] > valorB[key];
-				});
-				break;
-			case 'img':
-				console.log(tipo);
-				break;
-			case 'string':
-				console.log(tipo);
-				return valorA.localeCompare(valorB);
-				break;
-			case 'float':
-				console.log(tipo);
-				valorA = a[key];
-				valorB = b[key];
-				lista.sort(function (valorA, valorB) {
-					//console.log(parseFloat(valorA[key]) + "====" + parseFloat(valorB[key]))
-					return parseFloat(valorA[key]) > parseFloat(valorB[key]);
-				});
-				break;
-			case 'year':
-				console.log(tipo);
-				valorA = a[key] + 0;
-				valorB = b[key] + 0;
-				lista.sort(function (valorA, valorB) {
-					return valorA[key] > valorB[key];
-				});
-				break;
-			/*default:
-				celda.textContent = obj[key];
-				break;
-			*/
+			switch (tipo) {
+				case 'int':
+					valorA = valorA;
+					valorB = valorB;
+					lista.sort(function (valorA, valorB) {
+						return valorA[key] > valorB[key];
+					});
+					break;
+				case 'img':
+					break;
+				case 'string':
+					return valorA.localeCompare(valorB);
+					break;
+				case 'float':
+					valorA = a[key];
+					valorB = b[key];
+					lista.sort(function (valorA, valorB) {
+						return parseFloat(valorA[key]) > parseFloat(valorB[key]);
+					});
+					break;
+				case 'year':
+					valorA = a[key] + 0;
+					valorB = b[key] + 0;
+					lista.sort(function (valorA, valorB) {
+						return valorA[key] > valorB[key];
+					});
+					break;
+				/*default:
+					celda.textContent = obj[key];
+					break;
+				*/
+			}
+		};
+		if (order == 'asc') {
+			lista.sort(compararPorSegundoValor);
+		} else if (order == 'desc') {
+			lista.sort(compararPorSegundoValor);
+			lista.reverse();
 		}
-	};
-	//} else {
-	// Funció de comparació per ordenar per el segon valor de cada subarray
-	// const compararPorSegundoValor = (a, b) => {
-	// 	const valorA = a[2];
-	// 	const valorB = b[2];
+		imprTable(lista, tiposColumnas);
+	} else {
+		//Funció de comparació per ordenar per el segon valor de cada subarray
+		const compararPorSegundoValor = (a, b) => {
+			const valorA = a[2];
+			const valorB = b[2];
 
-	// 	// Utiliza localeCompare per comparar cadenas de text de menera alfabética
-	// 	return valorA.localeCompare(valorB);
-	// };
+			// Utiliza localeCompare per comparar cadenas de text de menera alfabética
+			return valorA.localeCompare(valorB);
+		};
 
-	if (order == 'asc') {
-		lista.sort(compararPorSegundoValor);
-	} else if (order == 'desc') {
-		lista.sort(compararPorSegundoValor);
-		lista.reverse();
+		if (order == 'asc') {
+			lista.sort(compararPorSegundoValor);
+		} else if (order == 'desc') {
+			lista.sort(compararPorSegundoValor);
+			lista.reverse();
+		}
+		//}
+		imprTable(lista, tiposColumnas);
 	}
-	//}
-	imprTable(lista, tiposColumnas);
 }
+
+// function orderList(order) {
+// 	// Funció de comparació per ordenar per el segon valor de cada subarray
+// 	const compararPorSegundoValor = (a, b) => {
+// 		const valorA = a[2];
+// 		const valorB = b[2];
+// 		// Utiliza localeCompare per comparar cadenas de text de menera alfabética
+// 		return valorA.localeCompare(valorB);
+// 	};
+// 	if (order == 'asc') {
+// 		lista.sort(compararPorSegundoValor);
+// 		console.log('asc')
+// 	} else if (order == 'desc') {
+// 		lista.sort(compararPorSegundoValor);
+// 		lista.reverse();
+// 		console.log('desc')
+// 	}
+// 	imprTable(lista, tiposColumnas);
+// }
 
 function searchList(nom) {
 	//let nom = prompt("Diguem el nom del/a " + bbdd + ":");
@@ -226,6 +242,8 @@ function searchList(nom) {
 }
 
 function calcMitjana() {
+	let mitjana = mitjanaNT / nObj
+	mitjana = mitjana.toFixed(2);
 	alert(mitjana);
 }
 
@@ -252,7 +270,6 @@ function imprTable(bbdd, tiposColumnas) {
 			} else {
 				orden = 'asc';
 			}
-			console.log(key);
 		};
 		th.textContent = key;
 		cabezera.appendChild(th);
@@ -473,7 +490,6 @@ function listaObj() {
 		// Agregar la tabla al cuerpo del documento
 		document.getElementById("resultat").appendChild(table);
 
-		console.log(pokemonsDeObjetos);
 	} else {
 		alert('Aquest boto nomes serveix per pokemons')
 	}
