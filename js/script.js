@@ -155,36 +155,29 @@ function orderList(order, key, llamada) {
 
 			switch (tipo) {
 				case 'int':
-					valorA = valorA;
-					valorB = valorB;
-					lista.sort(function (valorA, valorB) {
-						return valorA[key] > valorB[key];
-					});
+					valorA = parseInt(valorA);
+					valorB = parseInt(valorB);
 					break;
 				case 'img':
 					break;
 				case 'string':
 					return valorA.localeCompare(valorB);
-					break;
 				case 'float':
-					valorA = a[key];
-					valorB = b[key];
-					lista.sort(function (valorA, valorB) {
-						return parseFloat(valorA[key]) > parseFloat(valorB[key]);
-					});
+					valorA = parseFloat(valorA);
+					valorB = parseFloat(valorB);
 					break;
 				case 'year':
-					valorA = a[key] + 0;
-					valorB = b[key] + 0;
-					lista.sort(function (valorA, valorB) {
-						return valorA[key] > valorB[key];
-					});
+					valorA = parseInt(valorA);
+					valorB = parseInt(valorB);
 					break;
 				/*default:
 					celda.textContent = obj[key];
 					break;
 				*/
 			}
+
+			// Ahora realizamos la comparación después de la conversión
+			return valorA > valorB ? 1 : valorA < valorB ? -1 : 0;
 		};
 		if (order == 'asc') {
 			lista.sort(compararPorSegundoValor);
