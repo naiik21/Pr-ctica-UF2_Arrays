@@ -74,16 +74,19 @@ setTimeout(() => {
 
 //* Part 1
 
+//Varaibles
 var bbdd = null;
 let lista = [];
 let tiposColumnas;
+let columnNames;
 let mitjanaNT = 0;
 let nObj = 0;
 
+// Funció per selccionar la base de dadaes i contrlar que ho fas
 function env() {
 	event.preventDefault(); // Evita la recarga de la página si es un formulario
 	try {
-		bbdd = document.querySelector('input[name=bbdd]:checked').value;
+		bbdd = document.querySelector('input[name=bbdd]:checked').value; //Selecciona la opció del formulari
 		lista = [];
 		tiposColumnas;
 		mitjanaNT = 0;
@@ -97,6 +100,7 @@ function env() {
 
 }
 
+// Carrega bbdd que volem utilitzar
 function selectBBDD(bbdd) {
 	lista = [];
 	nObj = 0;
@@ -107,6 +111,7 @@ function selectBBDD(bbdd) {
 			nObj++;
 			mitjanaNT += parseFloat(pokemon.weight);
 		});
+		columnNames = ['ID', 'Imatge', 'Nom', 'Pes'];
 		tiposColumnas = ['int', 'img', 'string', 'float'];
 	} else if (bbdd == "municipis") {
 		municipis.forEach((municipi) => {
@@ -114,6 +119,7 @@ function selectBBDD(bbdd) {
 			nObj++;
 			mitjanaNT += parseFloat(municipi.nombre_habitants);
 		});
+		columnNames = ['Codic Postal', 'Escut', 'Nom', 'Nº Habitants'];
 		tiposColumnas = ['string', 'img', 'string', 'int'];
 	} else if (bbdd == "meteorits") {
 		meteorits.forEach((meteorit) => {
@@ -126,6 +132,7 @@ function selectBBDD(bbdd) {
 				mitjanaNT += parseFloat(meteorit.mass);
 			}
 		});
+		columnNames = ['ID', 'Data', 'Nom', 'Pes'];
 		tiposColumnas = ['int', 'year', 'string', 'float'];
 	} else if (bbdd == "pelicules") {
 		pelicules.forEach((pelicula) => {
@@ -133,6 +140,7 @@ function selectBBDD(bbdd) {
 			nObj++;
 			mitjanaNT += parseFloat(pelicula.rating);
 		});
+		columnNames = ['Valoració', 'Imatge', 'Titol', 'Any'];
 		tiposColumnas = ['float', 'img', 'string', 'int'];
 	}
 }
@@ -142,10 +150,15 @@ function imprTaulaNormal() {
 	imprTable(lista, tiposColumnas);
 }
 
+/*Funcio que ordena la llisa
+order: como volem que ho fagi si descendent o ascendent
+key: la columna qu voolem ordenar
+llamada: per on es crida la funció*/
 let orden = 'asc';
 function orderList(order, key, llamada) {
 	selectBBDD(bbdd);
 
+	// La funcio ha sigut cridada per la taula 
 	if (llamada == 'num') {
 		//Funció de comparació per ordenar per el segon valor de cada subarray
 		const compararPorSegundoValor = (a, b) => {
@@ -186,7 +199,9 @@ function orderList(order, key, llamada) {
 			lista.reverse();
 		}
 		imprTable(lista, tiposColumnas);
-	} else {
+	}
+	//Funció cridada per boto 
+	else {
 		//Funció de comparació per ordenar per el segon valor de cada subarray
 		const compararPorSegundoValor = (a, b) => {
 			const valorA = a[2];
@@ -207,25 +222,7 @@ function orderList(order, key, llamada) {
 	}
 }
 
-// function orderList(order) {
-// 	// Funció de comparació per ordenar per el segon valor de cada subarray
-// 	const compararPorSegundoValor = (a, b) => {
-// 		const valorA = a[2];
-// 		const valorB = b[2];
-// 		// Utiliza localeCompare per comparar cadenas de text de menera alfabética
-// 		return valorA.localeCompare(valorB);
-// 	};
-// 	if (order == 'asc') {
-// 		lista.sort(compararPorSegundoValor);
-// 		console.log('asc')
-// 	} else if (order == 'desc') {
-// 		lista.sort(compararPorSegundoValor);
-// 		lista.reverse();
-// 		console.log('desc')
-// 	}
-// 	imprTable(lista, tiposColumnas);
-// }
-
+// Busquem els valors que volem per un buscador
 function searchList(nom) {
 	//let nom = prompt("Diguem el nom del/a " + bbdd + ":");
 	//let resultado = lista.filter(valor => valor[2] != nom);
@@ -234,12 +231,14 @@ function searchList(nom) {
 	imprTable(resultado, tiposColumnas)
 }
 
+//Funció que calcula la mitjana de la llista 
 function calcMitjana() {
 	let mitjana = mitjanaNT / nObj
 	mitjana = mitjana.toFixed(2);
 	alert(mitjana);
 }
 
+// 
 function imprTable(bbdd, tiposColumnas) {
 	document.getElementById("resultat").innerHTML = "";
 	if (myChart) {
@@ -251,9 +250,11 @@ function imprTable(bbdd, tiposColumnas) {
 		location.reload();
 	}
 	let table = document.createElement("table");
-	let cabezera = table.insertRow(0);
+	table.border = "1";
+	let cabezera = table.createTHead();
 
-	// Creamos cabezera de las columnas
+	// Añadimos las columnas de la variable columnNames a la cabecera
+	let row = cabezera.insertRow(0);
 	Object.keys(bbdd[0]).forEach(function (key, index) {
 		let th = document.createElement("th");
 		th.onclick = function () {
@@ -264,7 +265,8 @@ function imprTable(bbdd, tiposColumnas) {
 				orden = 'asc';
 			}
 		};
-		th.textContent = key;
+
+		th.textContent = columnNames[key];
 		cabezera.appendChild(th);
 
 		// Establecemos el tipo de columna (int, img, string, float)
@@ -488,12 +490,3 @@ function listaObj() {
 	}
 
 }
-
-
-
-
-
-
-
-
-
