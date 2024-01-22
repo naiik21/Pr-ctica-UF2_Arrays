@@ -238,7 +238,7 @@ function calcMitjana() {
 	alert(mitjana);
 }
 
-// 
+//Funció que imprimeix la taula
 function imprTable(bbdd, tiposColumnas) {
 	document.getElementById("resultat").innerHTML = "";
 	if (myChart) {
@@ -265,7 +265,7 @@ function imprTable(bbdd, tiposColumnas) {
 				orden = 'asc';
 			}
 		};
-
+		// Posa el nom de les capzaleres
 		th.textContent = columnNames[key];
 		cabezera.appendChild(th);
 
@@ -314,14 +314,16 @@ function imprTable(bbdd, tiposColumnas) {
 
 
 //* Part 2
+//Eliminiem posible canva existent
 let myChart = null;
 
+// Funció que crea el grafic
 function grafic() {
 	document.getElementById("resultat").innerHTML = "";
 	const data = {
 		labels: [],
 		datasets: [{
-			label: 'My First Dataset',
+			label: 'Grafic',
 			data: [],
 			backgroundColor: [],
 			borderColor: []
@@ -336,6 +338,7 @@ function grafic() {
 	const grafMap = new Map();
 	let count = 0;
 
+	//Afegim els valors i contem quants hi han de cada
 	if (bbdd == "pokemons") {
 		//Pokemons
 		pokemons.forEach((pokemon) => {
@@ -395,6 +398,7 @@ function grafic() {
 		});
 	}
 
+	//Aleatoització del colors de fons
 	for (let n = 0; n < count; n++) {
 		var r = Math.floor(Math.random() * 256);
 		var g = Math.floor(Math.random() * 256);
@@ -424,9 +428,8 @@ function grafic() {
 // 	console.log(inputSearch.value)
 // });
 
+// Event per buscar un valor a temps real
 let nom = "";
-
-
 document.addEventListener('DOMContentLoaded', function () {
 	let inputSearch = document.getElementById('txtSearch');
 	inputSearch.addEventListener('input', (e) => {
@@ -436,6 +439,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 //* Part 4
+//Transformem la array de pokemons a un objecte i l'imprimim com a taula
 function listaObj() {
 	document.getElementById("resultat").innerHTML = "";
 	if (bbdd == 'pokemons') {
